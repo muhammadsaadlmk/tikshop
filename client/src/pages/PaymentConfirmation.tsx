@@ -25,6 +25,7 @@ type PaymentFormValues = z.infer<typeof paymentSchema>;
 const PaymentConfirmation = () => {
   const { toast } = useToast();
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const form = useForm<PaymentFormValues>({
     resolver: zodResolver(paymentSchema),
@@ -39,20 +40,51 @@ const PaymentConfirmation = () => {
 
   const onSubmit = async (data: PaymentFormValues) => {
     try {
-      await apiRequest('POST', '/api/payment-confirmation', data);
+      setIsSubmitting(true);
       
-      toast({
-        title: "Payment Confirmed",
-        description: "Your payment has been confirmed. We'll process your order shortly.",
+      // Submit to web3forms API
+      const web3FormsResponse = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: '6ae82029-8b9f-493e-b755-47c942182a0d',
+          subject: 'New TikTok Account Payment Confirmation',
+          from_name: 'TikTok Account Service',
+          name: data.senderName,
+          email: data.email,
+          transactionId: data.transactionId,
+          amount: data.amount,
+          senderNumber: data.senderNumber,
+          message: `Payment confirmation for Rs${data.amount}`,
+        })
       });
       
-      setIsSubmitted(true);
+      const result = await web3FormsResponse.json();
+      
+      if (result.success) {
+        // Also submit to our backend API for storage
+        await apiRequest('POST', '/api/payment-confirmation', data);
+        
+        toast({
+          title: "Payment Confirmed",
+          description: "Your payment has been confirmed. We'll process your order shortly.",
+        });
+        
+        setIsSubmitted(true);
+      } else {
+        throw new Error('Payment confirmation failed');
+      }
     } catch (error) {
       toast({
         title: "Error",
         description: "There was a problem confirming your payment. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -63,10 +95,10 @@ const PaymentConfirmation = () => {
       <div className="container mx-auto px-4 py-32">
         <div className="max-w-2xl mx-auto">
           <Link href="/">
-            <a className="inline-flex items-center text-[#25F4EE] hover:text-[#FE2C55] mb-8 transition-colors">
+            <span className="inline-flex items-center text-[#25F4EE] hover:text-[#FE2C55] mb-8 transition-colors cursor-pointer">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Home
-            </a>
+            </span>
           </Link>
           
           <div className="bg-[#1D1D1D]/50 backdrop-blur-md border border-white/10 p-8 rounded-xl">
@@ -170,10 +202,11 @@ const PaymentConfirmation = () => {
                     
                     <div className="pt-4">
                       <Button 
-                        type="submit" 
+                        type="submit"
+                        disabled={isSubmitting}
                         className="w-full py-6 bg-gradient-to-r from-[#FE2C55] to-[#25F4EE] rounded-lg text-white font-semibold hover:shadow-lg hover:shadow-[#FE2C55]/30 transition duration-300"
                       >
-                        Confirm Payment
+                        {isSubmitting ? 'Processing...' : 'Confirm Payment'}
                       </Button>
                     </div>
                   </form>
@@ -196,9 +229,9 @@ const PaymentConfirmation = () => {
                   Thank you for your payment. Your order is now being processed. We'll deliver your TikTok accounts to your email within 3 hours.
                 </p>
                 <Link href="/">
-                  <a className="inline-block px-8 py-3 bg-gradient-to-r from-[#FE2C55] to-[#25F4EE] rounded-full text-white font-semibold hover:shadow-lg hover:shadow-[#FE2C55]/30 transition duration-300">
+                  <span className="inline-block px-8 py-3 bg-gradient-to-r from-[#FE2C55] to-[#25F4EE] rounded-full text-white font-semibold hover:shadow-lg hover:shadow-[#FE2C55]/30 transition duration-300 cursor-pointer">
                     Return to Home
-                  </a>
+                  </span>
                 </Link>
               </div>
             )}

@@ -24,13 +24,13 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <Link href="/">
-              <a className="text-white hover:text-[#25F4EE] transition duration-300">Home</a>
+              <span className="text-white hover:text-[#25F4EE] transition duration-300 cursor-pointer">Home</span>
             </Link>
             <a href="#pricing" className="text-white hover:text-[#25F4EE] transition duration-300">Pricing</a>
             <a href="#how-it-works" className="text-white hover:text-[#25F4EE] transition duration-300">How It Works</a>
             <a href="#contact" className="text-white hover:text-[#25F4EE] transition duration-300">Contact</a>
             <Link href="/payment-confirmation">
-              <a className="text-white hover:text-[#25F4EE] transition duration-300">Payment</a>
+              <span className="text-white hover:text-[#25F4EE] transition duration-300 cursor-pointer">Payment</span>
             </Link>
           </div>
           
@@ -54,13 +54,13 @@ const Navbar = () => {
           <div className="md:hidden pt-4 pb-2 border-t border-[#1D1D1D]/30 mt-4">
             <div className="flex flex-col space-y-4">
               <Link href="/">
-                <a onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#25F4EE] transition duration-300">Home</a>
+                <span onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#25F4EE] transition duration-300 cursor-pointer block">Home</span>
               </Link>
               <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#25F4EE] transition duration-300">Pricing</a>
               <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#25F4EE] transition duration-300">How It Works</a>
               <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#25F4EE] transition duration-300">Contact</a>
               <Link href="/payment-confirmation">
-                <a onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#25F4EE] transition duration-300">Payment</a>
+                <span onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#25F4EE] transition duration-300 cursor-pointer block">Payment</span>
               </Link>
             </div>
           </div>
