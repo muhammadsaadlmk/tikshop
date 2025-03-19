@@ -4,7 +4,7 @@ const Features = () => {
   const features = [
     {
       icon: <DollarSign className="text-2xl" />,
-      title: "Immediate Monetization",
+      title: "Immediate Monetizeable",
       description: "Accounts are already eligible for the TikTok Creator Fund. Start earning from day one."
     },
     {
@@ -27,7 +27,7 @@ const Features = () => {
             Why Choose Our <span className="text-[#FE2C55]">TikTok</span> Accounts?
           </h2>
           <p className="text-[#F1F1F2]/90 max-w-2xl mx-auto">
-            Our monetized accounts give you a head start in the competitive world of TikTok content creation.
+            Our monetizeable accounts give you a head start in the competitive world of TikTok content creation.
           </p>
         </div>
         

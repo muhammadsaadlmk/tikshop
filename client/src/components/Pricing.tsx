@@ -7,7 +7,7 @@ const Pricing = () => {
       price: "Rs 300",
       description: "Perfect for beginners starting their TikTok journey",
       features: [
-        "1 TikTok Monetized Account",
+        "1 TikTok Monetizeable Account",
         "Account Setup Complete",
         "3-Hour Delivery",
         "Basic Support"
@@ -19,7 +19,7 @@ const Pricing = () => {
       price: "Rs 400",
       description: "Ideal for content creators building their presence",
       features: [
-        "2 TikTok Monetized Accounts",
+        "2 TikTok Monetizeable Accounts",
         "Account Setup Complete",
         "Priority Delivery",
         "Standard Support"
@@ -31,7 +31,7 @@ const Pricing = () => {
       price: "Rs 500",
       description: "Perfect for serious creators and small agencies",
       features: [
-        "6 TikTok Monetized Accounts",
+        "6 TikTok Monetizeable Accounts",
         "Account Setup Complete",
         "Express Delivery",
         "Premium Support"

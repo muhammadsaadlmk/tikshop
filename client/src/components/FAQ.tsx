@@ -11,7 +11,7 @@ const FAQ = () => {
 
   const faqs: FAQItem[] = [
     {
-      question: "Are these accounts really monetized?",
+      question: "Are these accounts really monetizeable?",
       answer: "Yes, all our accounts are fully set up and eligible for the TikTok Creator Fund. They meet all the requirements for monetization right out of the box."
     },
     {
