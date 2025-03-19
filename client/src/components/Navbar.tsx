@@ -28,7 +28,10 @@ const Navbar = () => {
             </Link>
             <a href="#pricing" className="text-white hover:text-[#25F4EE] transition duration-300">Pricing</a>
             <a href="#how-it-works" className="text-white hover:text-[#25F4EE] transition duration-300">How It Works</a>
-            <a href="#contact" className="text-white hover:text-[#25F4EE] transition duration-300">Contact</a>
+            <a href="#contact" className="text-white hover:text-[#25F4EE] transition duration-300">Order Now</a>
+            <Link href="/contact-us">
+              <span className="text-white hover:text-[#25F4EE] transition duration-300 cursor-pointer">Contact Us</span>
+            </Link>
             <Link href="/payment-confirmation">
               <span className="text-white hover:text-[#25F4EE] transition duration-300 cursor-pointer">Payment</span>
             </Link>
@@ -58,7 +61,10 @@ const Navbar = () => {
               </Link>
               <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#25F4EE] transition duration-300">Pricing</a>
               <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#25F4EE] transition duration-300">How It Works</a>
-              <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#25F4EE] transition duration-300">Contact</a>
+              <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#25F4EE] transition duration-300">Order Now</a>
+              <Link href="/contact-us">
+                <span onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#25F4EE] transition duration-300 cursor-pointer block">Contact Us</span>
+              </Link>
               <Link href="/payment-confirmation">
                 <span onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#25F4EE] transition duration-300 cursor-pointer block">Payment</span>
               </Link>

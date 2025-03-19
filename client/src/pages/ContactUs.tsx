@@ -1,107 +1,187 @@
+import { useState } from 'react';
 import { Link } from 'wouter';
-import { ArrowLeft, Mail, MessageCircle, Clock, MapPin } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import ContactForm from '@/components/ContactForm';
 
-const ContactUs = () => {
+const formSchema = z.object({
+  name: z.string().min(2, "Name is required"),
+  email: z.string().email("Valid email is required"),
+  subject: z.string().min(3, "Subject is required"),
+  message: z.string().min(10, "Message is required and should be at least 10 characters"),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
+const ContactUsPage = () => {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      subject: '',
+      message: ''
+    }
+  });
+
+  const onSubmit = async (data: FormValues) => {
+    try {
+      setIsSubmitting(true);
+      
+      // Submit to web3forms API
+      const web3FormsResponse = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: '6ae82029-8b9f-493e-b755-47c942182a0d',
+          subject: `New Question: ${data.subject}`,
+          from_name: 'TikTok Account Service',
+          name: data.name,
+          email: data.email,
+          message: data.message
+        })
+      });
+      
+      const result = await web3FormsResponse.json();
+      
+      if (result.success) {
+        toast({
+          title: "Message Sent",
+          description: "Thank you for contacting us. We'll get back to you as soon as possible.",
+        });
+        
+        form.reset();
+      } else {
+        throw new Error('Form submission failed');
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "There was a problem sending your message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="bg-gradient-to-br from-[#010101] to-[#1D1D1D] font-inter text-white min-h-screen">
       <Navbar />
       
       <div className="container mx-auto px-4 py-32">
-        <Link href="/">
-          <a className="inline-flex items-center text-[#25F4EE] hover:text-[#FE2C55] mb-8 transition-colors">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Home
-          </a>
-        </Link>
-        
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold font-poppins mb-4">Get in Touch</h1>
-            <p className="text-[#F1F1F2]/80 max-w-2xl mx-auto">
-              Have questions about our TikTok accounts? Our team is here to help you with any inquiries.
-            </p>
-          </div>
+        <div className="max-w-2xl mx-auto">
+          <Link href="/">
+            <span className="inline-flex items-center text-[#25F4EE] hover:text-[#FE2C55] mb-8 transition-colors cursor-pointer">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Home
+            </span>
+          </Link>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-            <div className="bg-[#1D1D1D]/50 backdrop-blur-md border border-white/10 p-6 rounded-xl flex flex-col items-center text-center">
-              <div className="w-12 h-12 bg-[#25F4EE]/20 rounded-full flex items-center justify-center mb-4">
-                <Mail className="h-6 w-6 text-[#25F4EE]" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Email Us</h3>
-              <p className="text-[#F1F1F2]/70 mb-4">For general inquiries and support</p>
-              <a href="mailto:support@tikshop.com" className="text-[#25F4EE] hover:text-[#FE2C55] transition-colors">
-                support@tikshop.com
-              </a>
-            </div>
-            
-            <div className="bg-[#1D1D1D]/50 backdrop-blur-md border border-white/10 p-6 rounded-xl flex flex-col items-center text-center">
-              <div className="w-12 h-12 bg-[#25F4EE]/20 rounded-full flex items-center justify-center mb-4">
-                <MessageCircle className="h-6 w-6 text-[#25F4EE]" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">WhatsApp</h3>
-              <p className="text-[#F1F1F2]/70 mb-4">For faster responses and support</p>
-              <a href="https://wa.me/923001234567" className="text-[#25F4EE] hover:text-[#FE2C55] transition-colors">
-                +92 300 1234567
-              </a>
-            </div>
-            
-            <div className="bg-[#1D1D1D]/50 backdrop-blur-md border border-white/10 p-6 rounded-xl flex flex-col items-center text-center">
-              <div className="w-12 h-12 bg-[#25F4EE]/20 rounded-full flex items-center justify-center mb-4">
-                <Clock className="h-6 w-6 text-[#25F4EE]" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Operating Hours</h3>
-              <p className="text-[#F1F1F2]/70 mb-4">We're available to assist you</p>
-              <p className="text-[#F1F1F2]">24/7 Customer Support</p>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div>
-              <h2 className="text-2xl font-bold font-poppins mb-6">Send Us a Message</h2>
-              <p className="text-[#F1F1F2]/80 mb-8">
-                Fill out the form below and our team will get back to you as soon as possible.
+          <div className="bg-[#1D1D1D]/50 backdrop-blur-md border border-white/10 p-8 rounded-xl">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold font-poppins mb-4">Contact Us</h1>
+              <p className="text-[#F1F1F2]/80">
+                Have a question or need help? Fill out the form below and we'll get back to you.
               </p>
-              
-              <ContactForm />
             </div>
             
-            <div className="flex flex-col justify-center">
-              <div className="bg-[#1D1D1D]/50 backdrop-blur-md border border-white/10 p-8 rounded-xl mb-8">
-                <h3 className="text-xl font-bold font-poppins mb-4">Frequently Asked Questions</h3>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Your Name</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Your full name" 
+                          className="w-full bg-[#010101] border border-white/20 rounded-lg focus:border-[#25F4EE]" 
+                          {...field} 
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
                 
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold mb-2">How long does account delivery take?</h4>
-                    <p className="text-[#F1F1F2]/70">Accounts are typically delivered within 3 hours after payment confirmation.</p>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-semibold mb-2">What payment methods do you accept?</h4>
-                    <p className="text-[#F1F1F2]/70">Currently, we only accept JazzCash for payments.</p>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-semibold mb-2">Are the accounts guaranteed to work?</h4>
-                    <p className="text-[#F1F1F2]/70">Yes, all accounts come with a 24-hour replacement guarantee if they don't work as described.</p>
-                  </div>
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email Address</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="email" 
+                          placeholder="Your email address" 
+                          className="w-full bg-[#010101] border border-white/20 rounded-lg focus:border-[#25F4EE]" 
+                          {...field} 
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="subject"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Subject</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="What is your question about?" 
+                          className="w-full bg-[#010101] border border-white/20 rounded-lg focus:border-[#25F4EE]" 
+                          {...field} 
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="message"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Message</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Please describe your question or issue in detail" 
+                          className="w-full bg-[#010101] border border-white/20 rounded-lg focus:border-[#25F4EE] min-h-[150px]" 
+                          {...field} 
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                
+                <div className="pt-4">
+                  <Button 
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full py-6 bg-gradient-to-r from-[#FE2C55] to-[#25F4EE] rounded-lg text-white font-semibold hover:shadow-lg hover:shadow-[#FE2C55]/30 transition duration-300"
+                  >
+                    {isSubmitting ? 'Sending...' : 'Send Message'}
+                  </Button>
                 </div>
-              </div>
-              
-              <div className="bg-gradient-to-r from-[#FE2C55]/20 to-[#25F4EE]/20 p-8 rounded-xl">
-                <div className="flex items-start mb-4">
-                  <MapPin className="h-6 w-6 text-[#FE2C55] mr-3 flex-shrink-0 mt-1" />
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">Our Location</h3>
-                    <p className="text-[#F1F1F2]/80">
-                      While we operate primarily online, our team is based in Pakistan to provide local support to our customers.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+              </form>
+            </Form>
           </div>
         </div>
       </div>
@@ -111,4 +191,4 @@ const ContactUs = () => {
   );
 };
 
-export default ContactUs;
+export default ContactUsPage;
