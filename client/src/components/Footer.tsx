@@ -31,7 +31,7 @@ const Footer = () => {
               </a>
             </div>
           </div>
-          
+
           <div>
             <h4 className="font-semibold text-lg mb-4">Quick Links</h4>
             <ul className="space-y-2">
@@ -51,43 +51,43 @@ const Footer = () => {
               </li>
             </ul>
           </div>
-          
+
           <div>
             <h4 className="font-semibold text-lg mb-4">Legal</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="#">
+                <Link href="/terms">
                   <a className="text-[#F1F1F2]/70 hover:text-[#25F4EE] transition duration-300">Terms & Conditions</a>
                 </Link>
               </li>
               <li>
-                <Link href="#">
+                <Link href="/privacy">
                   <a className="text-[#F1F1F2]/70 hover:text-[#25F4EE] transition duration-300">Privacy Policy</a>
                 </Link>
               </li>
               <li>
-                <Link href="#">
+                <Link href="/refund">
                   <a className="text-[#F1F1F2]/70 hover:text-[#25F4EE] transition duration-300">Refund Policy</a>
                 </Link>
               </li>
             </ul>
           </div>
-          
+
           <div>
             <h4 className="font-semibold text-lg mb-4">Contact Us</h4>
             <ul className="space-y-2">
               <li className="flex items-start">
                 <Mail className="text-[#25F4EE] h-5 w-5 mt-1 mr-3" />
-                <span className="text-[#F1F1F2]/70">support@tikshop.com</span>
+                <span className="text-[#F1F1F2]/70">tikshopbrand@gmail.com</span>
               </li>
               <li className="flex items-start">
                 <MessageCircle className="text-[#25F4EE] h-5 w-5 mt-1 mr-3" />
-                <span className="text-[#F1F1F2]/70">+92 300 1234567</span>
+                <span className="text-[#F1F1F2]/70">+92 303 9749212</span>
               </li>
             </ul>
           </div>
         </div>
-        
+
         <div className="border-t border-white/10 mt-12 pt-8 text-center">
           <p className="text-[#F1F1F2]/50">© {new Date().getFullYear()} TikShop. All rights reserved. Not affiliated with TikTok.</p>
         </div>
