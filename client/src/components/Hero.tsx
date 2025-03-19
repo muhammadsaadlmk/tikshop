@@ -14,7 +14,7 @@ const Hero = () => {
               Monetize Your <span className="bg-gradient-to-r from-[#25F4EE] to-[#FE2C55] text-transparent bg-clip-text">TikTok</span> Journey
             </h1>
             <p className="text-lg md:text-xl text-[#F1F1F2]/90 mb-8">
-              Premium monetizeable TikTok accounts for content creators.
+              Ready-to-use foreign TikTok accounts set up for monetization. Start earning today with our premium accounts.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
               <a 
