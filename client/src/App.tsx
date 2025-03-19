@@ -8,6 +8,7 @@ import PaymentConfirmation from "@/pages/PaymentConfirmation";
 import ContactUs from "@/pages/ContactUs";
 import TermsAndConditions from "@/pages/TermsAndConditions";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import RefundPolicy from "@/pages/RefundPolicy";
 
 function Router() {
   return (
@@ -17,6 +18,7 @@ function Router() {
       <Route path="/contact-us" component={ContactUs} />
       <Route path="/terms" component={TermsAndConditions} />
       <Route path="/privacy" component={PrivacyPolicy} />
+      <Route path="/refund" component={RefundPolicy} />
       <Route component={NotFound} />
     </Switch>
   );
