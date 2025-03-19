@@ -18,14 +18,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 
-// Define the plans with their email limits
 const PLANS = {
-  STARTER: { name: 'Starter', emailLimit: 1 },
-  STANDARD: { name: 'Standard', emailLimit: 2 },
-  PREMIUM: { name: 'Premium', emailLimit: 6 }
+  STARTER: { name: 'Starter', emailLimit: 1, description: 'Basic Package - 1 Account' },
+  STANDARD: { name: 'Standard', emailLimit: 2, description: 'Standard Package - 2 Accounts' },
+  PREMIUM: { name: 'Premium', emailLimit: 6, description: 'Premium Package - 6 Accounts' }
 };
 
-// List of countries for the country selector
 const COUNTRIES = [
   'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Argentina', 'Armenia', 'Australia', 
   'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 
@@ -68,11 +66,9 @@ const createBaseSchema = () => {
   });
 };
 
-// Dynamic form schema based on plan selection
 const createDynamicFormSchema = (selectedPlan: keyof typeof PLANS) => {
   const baseSchema = createBaseSchema();
 
-  // Add dynamic fields based on plan
   if (selectedPlan === 'STARTER') {
     return baseSchema.extend({
       accountEmail1: z.string().email("Valid email is required"),
@@ -121,13 +117,11 @@ const ContactForm = () => {
     }
   });
 
-  // Update validation schema when plan changes
   useEffect(() => {
     form.clearErrors();
     form.setValue('plan', selectedPlan);
   }, [selectedPlan, form]);
 
-  // Handle plan change
   const handlePlanChange = (value: keyof typeof PLANS) => {
     setSelectedPlan(value);
   };
@@ -136,7 +130,6 @@ const ContactForm = () => {
     try {
       setIsSubmitting(true);
 
-      // Collect all account emails based on the plan
       const accountEmails = [];
       for (let i = 1; i <= PLANS[selectedPlan].emailLimit; i++) {
         const emailKey = `accountEmail${i}` as keyof typeof data;
@@ -145,7 +138,6 @@ const ContactForm = () => {
         }
       }
 
-      // Submit to web3forms API
       const web3FormsResponse = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: {
@@ -170,7 +162,6 @@ const ContactForm = () => {
       const result = await web3FormsResponse.json();
 
       if (result.success) {
-        // Also submit to our backend API for storage
         await apiRequest('POST', '/api/contact', {
           ...data,
           accountEmails
@@ -200,27 +191,29 @@ const ContactForm = () => {
     <div className="bg-[#1D1D1D]/50 backdrop-blur-md border border-white/10 p-8 rounded-xl">
       <h3 className="text-2xl font-bold font-poppins mb-6">Contact Information</h3>
 
-      {/* Plan selection */}
       <div className="mb-8">
         <h4 className="text-xl font-semibold mb-3">Select Your Plan</h4>
+        <div className="text-[#25F4EE] mb-4">
+          Selected Plan: {PLANS[selectedPlan].description}
+        </div>
         <RadioGroup 
           defaultValue={selectedPlan}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
           onValueChange={(value) => handlePlanChange(value as keyof typeof PLANS)}
         >
-          <RadioGroupItem value="STARTER" className={`flex items-start space-x-2 p-4 rounded-lg border ${selectedPlan === 'STARTER' ? 'border-[#25F4EE]' : 'border-white/20'}`}>
+          <RadioGroupItem value="STARTER" className={`flex items-start space-x-2 p-4 rounded-lg border ${selectedPlan === 'STARTER' ? 'border-[#25F4EE] bg-[#25F4EE]/10' : 'border-white/20'}`}>
             <label htmlFor="plan-starter" className="cursor-pointer flex-1">
               <div className="font-medium">Starter</div>
               <div className="text-sm text-white/70">1 Account</div>
             </label>
           </RadioGroupItem>
-          <RadioGroupItem value="STANDARD" className={`flex items-start space-x-2 p-4 rounded-lg border ${selectedPlan === 'STANDARD' ? 'border-[#25F4EE]' : 'border-white/20'}`}>
+          <RadioGroupItem value="STANDARD" className={`flex items-start space-x-2 p-4 rounded-lg border ${selectedPlan === 'STANDARD' ? 'border-[#25F4EE] bg-[#25F4EE]/10' : 'border-white/20'}`}>
             <label htmlFor="plan-standard" className="cursor-pointer flex-1">
               <div className="font-medium">Standard</div>
               <div className="text-sm text-white/70">2 Accounts</div>
             </label>
           </RadioGroupItem>
-          <RadioGroupItem value="PREMIUM" className={`flex items-start space-x-2 p-4 rounded-lg border ${selectedPlan === 'PREMIUM' ? 'border-[#25F4EE]' : 'border-white/20'}`}>
+          <RadioGroupItem value="PREMIUM" className={`flex items-start space-x-2 p-4 rounded-lg border ${selectedPlan === 'PREMIUM' ? 'border-[#25F4EE] bg-[#25F4EE]/10' : 'border-white/20'}`}>
             <label htmlFor="plan-premium" className="cursor-pointer flex-1">
               <div className="font-medium">Premium</div>
               <div className="text-sm text-white/70">6 Accounts</div>

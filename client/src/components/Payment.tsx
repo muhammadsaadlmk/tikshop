@@ -15,7 +15,7 @@ const Payment = () => {
               <p className="text-[#F1F1F2]/90 mb-8">
                 We currently accept payments through JazzCash only. Follow these simple steps to complete your purchase:
               </p>
-              
+
               <div className="bg-[#1D1D1D]/50 backdrop-blur-md border border-white/10 p-6 rounded-xl mb-8">
                 <div className="flex items-center mb-4">
                   <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-4">
@@ -25,10 +25,10 @@ const Payment = () => {
                   </svg>
                   <h3 className="text-xl font-bold font-poppins">JazzCash Payment</h3>
                 </div>
-                
-                <p className="font-bold text-xl mb-2 text-[#25F4EE]">0300-1234567</p>
-                <p className="text-[#F1F1F2]/90 text-sm mb-4">Account Holder: TikShop Services</p>
-                
+
+                <p className="font-bold text-xl mb-2 text-[#25F4EE]">+92 322 4374661</p>
+                <p className="text-[#F1F1F2]/90 text-sm mb-4">Account Holder: Muhammad Mohsin</p>
+
                 <ol className="space-y-2 mb-4">
                   <li className="flex items-start">
                     <span className="bg-[#FE2C55] text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">1</span>
@@ -47,7 +47,7 @@ const Payment = () => {
                     <span>You'll be contacted via WhatsApp or email within 3 hours</span>
                   </li>
                 </ol>
-                
+
                 <div className="bg-[#25F4EE]/10 border border-[#25F4EE]/30 p-4 rounded-lg">
                   <p className="text-sm flex items-start">
                     <Info className="h-4 w-4 text-[#25F4EE] mr-2 mt-0.5" />
@@ -55,7 +55,7 @@ const Payment = () => {
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex justify-center md:justify-start">
                 <Link href="/payment-confirmation">
                   <span className="cursor-pointer inline-block px-8 py-3 bg-gradient-to-r from-[#FE2C55] to-[#25F4EE] rounded-full text-white font-semibold hover:shadow-lg hover:shadow-[#FE2C55]/30 transition duration-300 text-center">
@@ -64,7 +64,7 @@ const Payment = () => {
                 </Link>
               </div>
             </div>
-            
+
             {/* Contact Form */}
             <div id="contact">
               <ContactForm />
