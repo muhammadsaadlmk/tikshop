@@ -1,11 +1,11 @@
-import { Step } from 'lucide-react';
+
 
 const HowItWorks = () => {
   const steps = [
     {
       number: 1,
       title: "Choose a Plan",
-      description: "Select from our range of monetized TikTok account packages."
+      description: "Select from our range of monetizeable TikTok account packages."
     },
     {
       number: 2,
@@ -32,7 +32,7 @@ const HowItWorks = () => {
             How It <span className="text-[#25F4EE]">Works</span>
           </h2>
           <p className="text-[#F1F1F2]/90 max-w-2xl mx-auto">
-            Getting started with your monetized TikTok account is simple and quick
+            Getting started with your monetizeable TikTok account is simple and quick
           </p>
         </div>
         

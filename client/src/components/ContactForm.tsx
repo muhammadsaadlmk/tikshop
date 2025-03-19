@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -22,6 +23,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 const ContactForm = () => {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -38,20 +40,51 @@ const ContactForm = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      await apiRequest('POST', '/api/contact', data);
+      setIsSubmitting(true);
       
-      toast({
-        title: "Success",
-        description: "Thank you! Your information has been submitted. We will contact you shortly.",
+      // Submit to web3forms API
+      const web3FormsResponse = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: '6ae82029-8b9f-493e-b755-47c942182a0d',
+          subject: 'New TikTok Account Service Contact Form Submission',
+          from_name: 'TikTok Account Service',
+          name: `${data.firstName} ${data.lastName}`,
+          email: data.contactEmail,
+          accountEmail: data.accountEmail,
+          transactionId: data.transactionId,
+          whatsappNumber: data.whatsappNumber,
+          message: data.message || 'No additional message'
+        })
       });
       
-      form.reset();
+      const result = await web3FormsResponse.json();
+      
+      if (result.success) {
+        // Also submit to our backend API for storage
+        await apiRequest('POST', '/api/contact', data);
+        
+        toast({
+          title: "Success",
+          description: "Thank you! Your information has been submitted. We will contact you shortly.",
+        });
+        
+        form.reset();
+      } else {
+        throw new Error('Form submission failed');
+      }
     } catch (error) {
       toast({
         title: "Error",
         description: "There was a problem submitting your information. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -187,9 +220,10 @@ const ContactForm = () => {
           
           <Button 
             type="submit" 
+            disabled={isSubmitting}
             className="w-full py-6 bg-gradient-to-r from-[#FE2C55] to-[#25F4EE] rounded-lg text-white font-semibold hover:shadow-lg hover:shadow-[#FE2C55]/30 transition duration-300"
           >
-            Submit Information
+            {isSubmitting ? 'Submitting...' : 'Submit Information'}
           </Button>
         </form>
       </Form>
