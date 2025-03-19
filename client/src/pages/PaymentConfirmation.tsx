@@ -88,6 +88,7 @@ const PaymentConfirmation = () => {
           from_name: 'TikTok Account Service',
           name: data.senderName,
           email: data.email,
+          country: data.country,
           transactionId: data.transactionId,
           amount: data.amount,
           senderNumber: data.senderNumber,

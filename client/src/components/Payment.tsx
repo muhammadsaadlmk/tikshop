@@ -58,9 +58,9 @@ const Payment = () => {
               
               <div className="flex justify-center md:justify-start">
                 <Link href="/payment-confirmation">
-                  <a className="px-8 py-3 bg-gradient-to-r from-[#FE2C55] to-[#25F4EE] rounded-full text-white font-semibold hover:shadow-lg hover:shadow-[#FE2C55]/30 transition duration-300 text-center">
+                  <span className="cursor-pointer inline-block px-8 py-3 bg-gradient-to-r from-[#FE2C55] to-[#25F4EE] rounded-full text-white font-semibold hover:shadow-lg hover:shadow-[#FE2C55]/30 transition duration-300 text-center">
                     Payment Confirmation Page
-                  </a>
+                  </span>
                 </Link>
               </div>
             </div>
