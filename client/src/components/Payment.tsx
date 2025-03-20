@@ -26,8 +26,8 @@ const Payment = () => {
                   <h3 className="text-xl font-bold font-poppins">JazzCash Payment</h3>
                 </div>
 
-                <p className="font-bold text-xl mb-2 text-[#25F4EE]">+92 322 4374661</p>
-                <p className="text-[#F1F1F2]/90 text-sm mb-4">Account Holder: Muhammad Mohsin</p>
+                <p className="font-bold text-xl mb-2 text-[#25F4EE]">+92 328 4336247</p>
+                <p className="text-[#F1F1F2]/90 text-sm mb-4">Account Holder: Muhammad Saad</p>
 
                 <ol className="space-y-2 mb-4">
                   <li className="flex items-start">
