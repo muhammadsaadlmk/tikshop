@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -16,7 +16,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from '@/hooks/use-toast';
-import { apiRequest } from '@/lib/queryClient';
 
 const PLANS = {
   STARTER: { name: 'Starter', emailLimit: 1, description: 'Basic Package - 1 Account' },
@@ -53,52 +52,25 @@ const COUNTRIES = [
   'Yemen', 'Zambia', 'Zimbabwe'
 ];
 
-const createBaseSchema = () => {
-  return z.object({
-    firstName: z.string().min(2, "First name is required"),
-    lastName: z.string().min(2, "Last name is required"),
-    contactEmail: z.string().email("Valid email is required"),
-    plan: z.enum(['STARTER', 'STANDARD', 'PREMIUM']),
-    country: z.string().min(1, "Country is required"),
-    transactionId: z.string().min(3, "Transaction ID is required"),
-    whatsappNumber: z.string().min(10, "Valid WhatsApp number is required"),
-    message: z.string().optional(),
-  });
-};
-
-const createDynamicFormSchema = (selectedPlan: keyof typeof PLANS) => {
-  const baseSchema = createBaseSchema();
-
-  if (selectedPlan === 'STARTER') {
-    return baseSchema.extend({
-      accountEmail1: z.string().email("Valid email is required"),
-    });
-  } else if (selectedPlan === 'STANDARD') {
-    return baseSchema.extend({
-      accountEmail1: z.string().email("Valid email is required"),
-      accountEmail2: z.string().email("Valid email is required"),
-    });
-  } else if (selectedPlan === 'PREMIUM') {
-    return baseSchema.extend({
-      accountEmail1: z.string().email("Valid email is required"),
-      accountEmail2: z.string().email("Valid email is required"),
-      accountEmail3: z.string().email("Valid email is required"),
-      accountEmail4: z.string().email("Valid email is required"),
-      accountEmail5: z.string().email("Valid email is required"),
-      accountEmail6: z.string().email("Valid email is required"),
-    });
-  }
-
-  return baseSchema;
-};
+const formSchema = z.object({
+  firstName: z.string().min(2, "First name is required"),
+  lastName: z.string().min(2, "Last name is required"),
+  contactEmail: z.string().email("Valid email is required"),
+  plan: z.enum(['STARTER', 'STANDARD', 'PREMIUM']),
+  country: z.string().min(1, "Country is required"),
+  transactionId: z.string().min(3, "Transaction ID is required"),
+  whatsappNumber: z.string().min(10, "Valid WhatsApp number is required"),
+  message: z.string().optional(),
+  accountEmails: z.array(z.string().email("Valid email is required")).min(1),
+});
 
 const ContactForm = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<keyof typeof PLANS>('STARTER');
 
-  const form = useForm({
-    resolver: zodResolver(createDynamicFormSchema(selectedPlan)),
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -108,78 +80,56 @@ const ContactForm = () => {
       transactionId: '',
       whatsappNumber: '',
       message: '',
-      accountEmail1: '',
-      accountEmail2: '',
-      accountEmail3: '',
-      accountEmail4: '',
-      accountEmail5: '',
-      accountEmail6: '',
+      accountEmails: [''],
     }
   });
 
-  useEffect(() => {
-    form.clearErrors();
-    form.setValue('plan', selectedPlan);
-  }, [selectedPlan, form]);
-
-  const handlePlanChange = (value: keyof typeof PLANS) => {
-    setSelectedPlan(value);
-  };
-
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       setIsSubmitting(true);
 
-      const accountEmails = [];
-      for (let i = 1; i <= PLANS[selectedPlan].emailLimit; i++) {
-        const emailKey = `accountEmail${i}` as keyof typeof data;
-        if (data[emailKey]) {
-          accountEmails.push(data[emailKey]);
-        }
-      }
+      const formData = new FormData();
+      formData.append('access_key', '6ae82029-8b9f-493e-b755-47c942182a0d');
+      formData.append('subject', `New TikTok Account Order - ${PLANS[selectedPlan].name} Plan`);
+      formData.append('from_name', 'TikTok Account Service Order');
+      formData.append('name', `${data.firstName} ${data.lastName}`);
+      formData.append('email', data.contactEmail);
+      formData.append('message', `
+Order Details:
+- Plan: ${PLANS[selectedPlan].name}
+- Country: ${data.country}
+- Account Emails: ${data.accountEmails.join(', ')}
+- Transaction ID: ${data.transactionId}
+- WhatsApp: ${data.whatsappNumber}
+${data.message ? `\nAdditional Message:\n${data.message}` : ''}
+      `.trim());
 
-      const web3FormsResponse = await fetch('https://api.web3forms.com/submit', {
+      const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          access_key: '6ae82029-8b9f-493e-b755-47c942182a0d',
-          subject: `New TikTok Account Order - ${PLANS[selectedPlan].name} Plan`,
-          from_name: 'TikTok Account Service',
-          name: `${data.firstName} ${data.lastName}`,
-          email: data.contactEmail,
-          plan: PLANS[selectedPlan].name,
-          country: data.country,
-          accountEmails: accountEmails.join(', '),
-          transactionId: data.transactionId,
-          whatsappNumber: data.whatsappNumber,
-          message: data.message || 'No additional message'
-        })
+        body: formData
       });
 
-      const result = await web3FormsResponse.json();
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       if (result.success) {
-        await apiRequest('POST', '/api/contact', {
-          ...data,
-          accountEmails
-        });
-
         toast({
-          title: "Success",
-          description: "Thank you! Your order has been submitted. We will contact you shortly.",
+          title: "Order Submitted Successfully",
+          description: "Thank you! We'll contact you shortly via WhatsApp or email.",
         });
-
         form.reset();
+        setSelectedPlan('STARTER');
       } else {
-        throw new Error('Form submission failed');
+        throw new Error(result.message || 'Form submission failed');
       }
     } catch (error) {
+      console.error('Form submission error:', error);
       toast({
-        title: "Error",
-        description: "There was a problem submitting your information. Please try again.",
+        title: "Submission Error",
+        description: "There was a problem submitting your order. Please try again or contact support.",
         variant: "destructive",
       });
     } finally {
@@ -199,26 +149,22 @@ const ContactForm = () => {
         <RadioGroup 
           defaultValue={selectedPlan}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-          onValueChange={(value) => handlePlanChange(value as keyof typeof PLANS)}
+          onValueChange={(value) => setSelectedPlan(value as keyof typeof PLANS)}
         >
-          <RadioGroupItem value="STARTER" className={`flex items-start space-x-2 p-4 rounded-lg border ${selectedPlan === 'STARTER' ? 'border-[#25F4EE] bg-[#25F4EE]/10' : 'border-white/20'}`}>
-            <label htmlFor="plan-starter" className="cursor-pointer flex-1">
-              <div className="font-medium">Starter</div>
-              <div className="text-sm text-white/70">1 Account</div>
-            </label>
-          </RadioGroupItem>
-          <RadioGroupItem value="STANDARD" className={`flex items-start space-x-2 p-4 rounded-lg border ${selectedPlan === 'STANDARD' ? 'border-[#25F4EE] bg-[#25F4EE]/10' : 'border-white/20'}`}>
-            <label htmlFor="plan-standard" className="cursor-pointer flex-1">
-              <div className="font-medium">Standard</div>
-              <div className="text-sm text-white/70">2 Accounts</div>
-            </label>
-          </RadioGroupItem>
-          <RadioGroupItem value="PREMIUM" className={`flex items-start space-x-2 p-4 rounded-lg border ${selectedPlan === 'PREMIUM' ? 'border-[#25F4EE] bg-[#25F4EE]/10' : 'border-white/20'}`}>
-            <label htmlFor="plan-premium" className="cursor-pointer flex-1">
-              <div className="font-medium">Premium</div>
-              <div className="text-sm text-white/70">6 Accounts</div>
-            </label>
-          </RadioGroupItem>
+          {Object.entries(PLANS).map(([key, plan]) => (
+            <RadioGroupItem
+              key={key}
+              value={key}
+              className={`flex items-start space-x-2 p-4 rounded-lg border ${
+                selectedPlan === key ? 'border-[#25F4EE] bg-[#25F4EE]/10' : 'border-white/20'
+              }`}
+            >
+              <label htmlFor={`plan-${key.toLowerCase()}`} className="cursor-pointer flex-1">
+                <div className="font-medium">{plan.name}</div>
+                <div className="text-sm text-white/70">{plan.emailLimit} Account{plan.emailLimit > 1 ? 's' : ''}</div>
+              </label>
+            </RadioGroupItem>
+          ))}
         </RadioGroup>
       </div>
 
@@ -260,6 +206,7 @@ const ContactForm = () => {
               )}
             />
           </div>
+
           <FormField
             control={form.control}
             name="contactEmail"
@@ -278,16 +225,14 @@ const ContactForm = () => {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="country"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Country</FormLabel>
-                <Select 
-                  onValueChange={field.onChange} 
-                  defaultValue={field.value}
-                >
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="w-full bg-[#010101] border border-white/20 rounded-lg focus:border-[#25F4EE]">
                       <SelectValue placeholder="Select your country" />
@@ -303,35 +248,35 @@ const ContactForm = () => {
               </FormItem>
             )}
           />
+
           <div className="border-t border-white/10 my-6 pt-6">
             <h4 className="text-xl font-semibold mb-4">Account Email{PLANS[selectedPlan].emailLimit > 1 ? 's' : ''}</h4>
             <p className="text-sm text-white/70 mb-4">
               You can add {PLANS[selectedPlan].emailLimit} email{PLANS[selectedPlan].emailLimit > 1 ? 's' : ''} with the {PLANS[selectedPlan].name} plan.
             </p>
-            <div className="space-y-4">
-              {Array.from({ length: PLANS[selectedPlan].emailLimit }).map((_, index) => (
-                <FormField
-                  key={`accountEmail${index + 1}`}
-                  control={form.control}
-                  name={`accountEmail${index + 1}` as any}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Account Email {index + 1}</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="email" 
-                          placeholder="Email to receive account" 
-                          className="w-full bg-[#010101] border border-white/20 rounded-lg focus:border-[#25F4EE]" 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ))}
-            </div>
+            {Array.from({ length: PLANS[selectedPlan].emailLimit }).map((_, index) => (
+              <FormField
+                key={`accountEmails.${index}`}
+                control={form.control}
+                name={`accountEmails.${index}`}
+                render={({ field }) => (
+                  <FormItem className="mb-4">
+                    <FormLabel>Account Email {index + 1}</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="email" 
+                        placeholder="Email to receive account" 
+                        className="w-full bg-[#010101] border border-white/20 rounded-lg focus:border-[#25F4EE]" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
           </div>
+
           <FormField
             control={form.control}
             name="transactionId"
@@ -349,6 +294,7 @@ const ContactForm = () => {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="whatsappNumber"
@@ -367,6 +313,7 @@ const ContactForm = () => {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="message"
@@ -384,6 +331,7 @@ const ContactForm = () => {
               </FormItem>
             )}
           />
+
           <Button 
             type="submit" 
             disabled={isSubmitting}
