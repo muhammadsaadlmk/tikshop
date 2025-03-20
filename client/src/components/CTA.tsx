@@ -12,7 +12,7 @@ const CTA = () => {
             Ready to Start Your <span className="bg-gradient-to-r from-[#25F4EE] to-[#FE2C55] text-transparent bg-clip-text">TikTok</span> Journey?
           </h2>
           <p className="text-xl text-[#F1F1F2]/90 mb-8 max-w-2xl mx-auto">
-            Get monetized TikTok accounts today and start earning from your content creation skills
+            Get monetizeable TikTok accounts today and start earning from your content creation skills
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a 
@@ -22,7 +22,7 @@ const CTA = () => {
               Get Started Now
             </a>
             <a 
-              href="#contact" 
+              href="/contact-us" 
               className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white font-semibold hover:bg-white/20 transition duration-300 text-center"
             >
               Contact Us

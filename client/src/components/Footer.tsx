@@ -14,7 +14,7 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-[#F1F1F2]/70 mb-4">
-              Premium monetized TikTok accounts for content creators.
+              Premium monetizeable TikTok accounts for content creators.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300">
@@ -78,7 +78,7 @@ const Footer = () => {
             <ul className="space-y-2">
               <li className="flex items-start">
                 <Mail className="text-[#25F4EE] h-5 w-5 mt-1 mr-3" />
-                <span className="text-[#F1F1F2]/70">tikshopbrand@gmail.com</span>
+                <span className="text-[#F1F1F2]/70">support-tikshop@gmail.com</span>
               </li>
               <li className="flex items-start">
                 <MessageCircle className="text-[#25F4EE] h-5 w-5 mt-1 mr-3" />
@@ -89,7 +89,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-white/10 mt-12 pt-8 text-center">
-          <p className="text-[#F1F1F2]/50">© {new Date().getFullYear()} TikShop. All rights reserved. Not affiliated with TikTok.</p>
+          <p className="text-[#F1F1F2]/50">© {new Date().getFullYear()} TikShop. All rights reserved.</p>
         </div>
       </div>
     </footer>
