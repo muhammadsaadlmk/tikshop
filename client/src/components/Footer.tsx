@@ -89,7 +89,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-white/10 mt-12 pt-8 text-center">
-          <p className="text-[#F1F1F2]/50">© {new Date().getFullYear()} TikShop. All rights reserved.</p>
+          <p className="text-[#F1F1F2]/50">© {new Date().getFullYear()} TikShop. All rights reserved. Created and produced by MS Prime Tech Services in partnership with ARCodeNest.</p>
         </div>
       </div>
     </footer>
