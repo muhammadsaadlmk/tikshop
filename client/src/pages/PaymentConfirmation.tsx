@@ -249,7 +249,7 @@ const PaymentConfirmation = () => {
                       name="country"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Country</FormLabel>
+                          <FormLabel>Country For Account</FormLabel>
                           <Select 
                             onValueChange={field.onChange} 
                             defaultValue={field.value}
