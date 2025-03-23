@@ -83,7 +83,7 @@ const PaymentConfirmation = () => {
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          access_key: '6ae82029-8b9f-493e-b755-47c942182a0d',
+          access_key: '0639a8c1-defd-4e5a-b74b-33926b5c7af6',
           subject: 'New TikTok Account Payment Confirmation',
           from_name: 'TikTok Account Service',
           name: data.senderName,
