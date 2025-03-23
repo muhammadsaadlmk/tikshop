@@ -45,7 +45,7 @@ const Footer = () => {
                 <Instagram className="h-5 w-5" />
               </a>
               <a 
-                href="https://tiktok.com/msprimetechservicespk/" 
+                href="https://tiktok.com/@msprimetechservicespk/" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300"
