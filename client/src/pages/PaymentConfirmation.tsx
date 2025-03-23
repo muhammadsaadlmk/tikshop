@@ -75,48 +75,57 @@ const PaymentConfirmation = () => {
     try {
       setIsSubmitting(true);
       
-      // Submit to web3forms API
-      const web3FormsResponse = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          access_key: '0639a8c1-defd-4e5a-b74b-33926b5c7af6',
-          subject: 'New TikTok Account Payment Confirmation',
-          from_name: 'TikTok Account Service',
-          name: data.senderName,
-          email: data.email,
-          country: data.country,
-          transactionId: data.transactionId,
-          amount: data.amount,
-          senderNumber: data.senderNumber,
-          message: `Payment confirmation for Rs${data.amount}`,
-        })
-      });
-      
-      const result = await web3FormsResponse.json();
-      
-      if (result.success) {
-        // Also submit to our backend API for storage
+      // Submit form data to backend first to ensure it's saved, regardless of other APIs
+      try {
+        // First submit to our backend API
         await apiRequest('POST', '/api/payment-confirmation', data);
         
+        // Now we can try the external web3forms API
+        const web3FormsResponse = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            access_key: '0639a8c1-defd-4e5a-b74b-33926b5c7af6',
+            subject: 'New TikTok Account Payment Confirmation',
+            from_name: 'TikTok Account Service',
+            name: data.senderName,
+            email: data.email,
+            country: data.country,
+            transactionId: data.transactionId,
+            amount: data.amount,
+            senderNumber: data.senderNumber,
+            message: `Payment confirmation for Rs${data.amount}`,
+          })
+        });
+        
+        // Try to get the API response, but don't stop if it fails
+        try {
+          const result = await web3FormsResponse.json();
+          // We don't need to check result.success here as we already saved to backend
+        } catch (jsonError) {
+          // Ignore JSON parsing errors, as backend already succeeded
+          console.log("Web3Forms JSON parsing error (ignored):", jsonError);
+        }
+        
+        // Show success since we saved to our backend
         toast({
           title: "Payment Confirmed",
           description: "Your payment has been confirmed. We'll process your order shortly.",
         });
         
         setIsSubmitted(true);
-      } else {
-        throw new Error('Payment confirmation failed');
+      } catch (error) {
+        // This would only happen if the backend call fails
+        console.error("Payment submission error:", error);
+        toast({
+          title: "Error",
+          description: "There was a problem confirming your payment. Please try again.",
+          variant: "destructive",
+        });
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "There was a problem confirming your payment. Please try again.",
-        variant: "destructive",
-      });
     } finally {
       setIsSubmitting(false);
     }
