@@ -14,19 +14,43 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-[#F1F1F2]/70 mb-4">
-              Premium monetizeable TikTok accounts for content creators.
+              Premium monetized TikTok accounts for content creators.
             </p>
             <div className="flex space-x-4">
-              <a href="https://facebook.com/msprimetechservices/" className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300">
+              <a 
+                href="https://facebook.com/msprimetechservices/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300"
+                aria-label="Facebook"
+              >
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="https://x.com/muhammadsaadlmk/" className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300">
+              <a 
+                href="https://x.com/muhammadsaadlmk/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300"
+                aria-label="X (Twitter)"
+              >
                 <Twitter className="h-5 w-5" />
               </a>
-              <a href="https://instagram.com/muhammadsaadlmk/" className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300">
+              <a 
+                href="https://instagram.com/muhammadsaadlmk/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300"
+                aria-label="Instagram"
+              >
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="https://tiktok.com/msprimetechservicespk/" className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300">
+              <a 
+                href="https://tiktok.com/msprimetechservicespk/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300"
+                aria-label="TikTok"
+              >
                 <SiTiktok className="h-5 w-5" />
               </a>
             </div>
