@@ -17,16 +17,16 @@ const Footer = () => {
               Premium monetizeable TikTok accounts for content creators.
             </p>
             <div className="flex space-x-4">
-              <a href="facebook.com/msprimetechservices" className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300">
+              <a href="https://facebook.com/msprimetechservices/" className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="x.com/muhammadsaadlmk" className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300">
+              <a href="https://x.com/muhammadsaadlmk/" className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300">
                 <Twitter className="h-5 w-5" />
               </a>
-              <a href="instagram.com/muhammadsaadlmk" className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300">
+              <a href="https://instagram.com/muhammadsaadlmk/" className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="tiktok.com/msprimetechservices" className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300">
+              <a href="https://tiktok.com/msprimetechservicespk/" className="text-[#F1F1F2] hover:text-[#25F4EE] transition duration-300">
                 <SiTiktok className="h-5 w-5" />
               </a>
             </div>
