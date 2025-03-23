@@ -72,15 +72,22 @@ const PaymentConfirmation = () => {
   });
 
   const onSubmit = async (data: PaymentFormValues) => {
+    let backendSuccess = false;
+    
     try {
       setIsSubmitting(true);
       
-      // Submit form data to backend first to ensure it's saved, regardless of other APIs
+      // First try to submit to backend
       try {
-        // First submit to our backend API
         await apiRequest('POST', '/api/payment-confirmation', data);
-        
-        // Now we can try the external web3forms API
+        backendSuccess = true;
+      } catch (backendError) {
+        console.error("Backend submission error:", backendError);
+        // Continue with web3forms even if backend fails
+      }
+      
+      // Then submit to web3forms API
+      try {
         const web3FormsResponse = await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
           headers: {
@@ -88,7 +95,7 @@ const PaymentConfirmation = () => {
             'Accept': 'application/json'
           },
           body: JSON.stringify({
-            access_key: '0639a8c1-defd-4e5a-b74b-33926b5c7af6',
+            access_key: '6ae82029-8b9f-493e-b755-47c942182a0d',
             subject: 'New TikTok Account Payment Confirmation',
             from_name: 'TikTok Account Service',
             name: data.senderName,
@@ -101,31 +108,36 @@ const PaymentConfirmation = () => {
           })
         });
         
-        // Try to get the API response, but don't stop if it fails
-        try {
-          const result = await web3FormsResponse.json();
-          // We don't need to check result.success here as we already saved to backend
-        } catch (jsonError) {
-          // Ignore JSON parsing errors, as backend already succeeded
-          console.log("Web3Forms JSON parsing error (ignored):", jsonError);
+        const result = await web3FormsResponse.json();
+        
+        // If web3forms fails but backend was successful, 
+        // we still consider it a partial success
+        if (!result.success && !backendSuccess) {
+          throw new Error('Web3forms submission failed');
         }
-        
-        // Show success since we saved to our backend
-        toast({
-          title: "Payment Confirmed",
-          description: "Your payment has been confirmed. We'll process your order shortly.",
-        });
-        
-        setIsSubmitted(true);
-      } catch (error) {
-        // This would only happen if the backend call fails
-        console.error("Payment submission error:", error);
-        toast({
-          title: "Error",
-          description: "There was a problem confirming your payment. Please try again.",
-          variant: "destructive",
-        });
+      } catch (web3Error) {
+        console.error("Web3forms submission error:", web3Error);
+        // If backend was successful but web3forms failed,
+        // we still show success message
+        if (!backendSuccess) {
+          throw new Error('Payment confirmation failed on both systems');
+        }
       }
+      
+      // If we get here, at least one submission was successful
+      toast({
+        title: "Payment Confirmed",
+        description: "Your payment has been confirmed. We'll process your order shortly.",
+      });
+      
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error("Payment confirmation error:", error);
+      toast({
+        title: "Error",
+        description: "There was a problem confirming your payment. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -249,7 +261,7 @@ const PaymentConfirmation = () => {
                       name="country"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Country For Account</FormLabel>
+                          <FormLabel>Country</FormLabel>
                           <Select 
                             onValueChange={field.onChange} 
                             defaultValue={field.value}
