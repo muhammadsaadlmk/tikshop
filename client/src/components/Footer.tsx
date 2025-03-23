@@ -78,7 +78,7 @@ const Footer = () => {
             <ul className="space-y-2">
               <li className="flex items-start">
                 <Mail className="text-[#25F4EE] h-5 w-5 mt-1 mr-3" />
-                <span className="text-[#F1F1F2]/70">support-tikshop@gmail.com</span>
+                <span className="text-[#F1F1F2]/70">don4t6@gmail.com</span>
               </li>
               <li className="flex items-start">
                 <MessageCircle className="text-[#25F4EE] h-5 w-5 mt-1 mr-3" />
