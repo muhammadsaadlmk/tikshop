@@ -72,67 +72,46 @@ const PaymentConfirmation = () => {
   });
 
   const onSubmit = async (data: PaymentFormValues) => {
-    let backendSuccess = false;
-    
     try {
       setIsSubmitting(true);
       
-      // First try to submit to backend
-      try {
-        await apiRequest('POST', '/api/payment-confirmation', data);
-        backendSuccess = true;
-      } catch (backendError) {
-        console.error("Backend submission error:", backendError);
-        // Continue with web3forms even if backend fails
-      }
-      
-      // Then submit to web3forms API
-      try {
-        const web3FormsResponse = await fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({
-            access_key: '6ae82029-8b9f-493e-b755-47c942182a0d',
-            subject: 'New TikTok Account Payment Confirmation',
-            from_name: 'TikTok Account Service',
-            name: data.senderName,
-            email: data.email,
-            country: data.country,
-            transactionId: data.transactionId,
-            amount: data.amount,
-            senderNumber: data.senderNumber,
-            message: `Payment confirmation for Rs${data.amount}`,
-          })
-        });
-        
-        const result = await web3FormsResponse.json();
-        
-        // If web3forms fails but backend was successful, 
-        // we still consider it a partial success
-        if (!result.success && !backendSuccess) {
-          throw new Error('Web3forms submission failed');
-        }
-      } catch (web3Error) {
-        console.error("Web3forms submission error:", web3Error);
-        // If backend was successful but web3forms failed,
-        // we still show success message
-        if (!backendSuccess) {
-          throw new Error('Payment confirmation failed on both systems');
-        }
-      }
-      
-      // If we get here, at least one submission was successful
-      toast({
-        title: "Payment Confirmed",
-        description: "Your payment has been confirmed. We'll process your order shortly.",
+      // Submit to web3forms API
+      const web3FormsResponse = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: '6ae82029-8b9f-493e-b755-47c942182a0d',
+          subject: 'New TikTok Account Payment Confirmation',
+          from_name: 'TikTok Account Service',
+          name: data.senderName,
+          email: data.email,
+          country: data.country,
+          transactionId: data.transactionId,
+          amount: data.amount,
+          senderNumber: data.senderNumber,
+          message: `Payment confirmation for Rs${data.amount}`,
+        })
       });
       
-      setIsSubmitted(true);
+      const result = await web3FormsResponse.json();
+      
+      if (result.success) {
+        // Also submit to our backend API for storage
+        await apiRequest('POST', '/api/payment-confirmation', data);
+        
+        toast({
+          title: "Payment Confirmed",
+          description: "Your payment has been confirmed. We'll process your order shortly.",
+        });
+        
+        setIsSubmitted(true);
+      } else {
+        throw new Error('Payment confirmation failed');
+      }
     } catch (error) {
-      console.error("Payment confirmation error:", error);
       toast({
         title: "Error",
         description: "There was a problem confirming your payment. Please try again.",
