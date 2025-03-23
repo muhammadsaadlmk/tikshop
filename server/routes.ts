@@ -5,28 +5,27 @@ import {
   insertContactSchema, 
   insertPaymentSchema 
 } from "@shared/schema";
-import { fromZodError } from "zod-validation-error";
+import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API routes with /api prefix
   
-  // Contact form submission
+  // Simple contact form submission handler
   app.post("/api/contact", async (req: Request, res: Response) => {
     try {
-      const validatedData = insertContactSchema.parse(req.body);
+      // Just validate the data without actually storing it
+      insertContactSchema.parse(req.body);
       
-      const submission = await storage.createContactSubmission(validatedData);
-      
+      // Return success response
       res.status(201).json({
         message: "Contact form submitted successfully",
-        submission
+        submission: req.body
       });
     } catch (error) {
-      if (error instanceof Error) {
-        const validationError = fromZodError(error);
+      if (error instanceof z.ZodError) {
         res.status(400).json({ 
           message: "Validation error", 
-          errors: validationError.message 
+          errors: error.issues.map(i => i.message).join(", ")
         });
       } else {
         res.status(500).json({ 
@@ -36,23 +35,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Payment confirmation
+  // Simple payment confirmation handler 
   app.post("/api/payment-confirmation", async (req: Request, res: Response) => {
     try {
-      const validatedData = insertPaymentSchema.parse(req.body);
+      // Just validate the data without actually storing it
+      insertPaymentSchema.parse(req.body);
       
-      const confirmation = await storage.createPaymentConfirmation(validatedData);
-      
+      // Return success response
       res.status(201).json({
         message: "Payment confirmation submitted successfully",
-        confirmation
+        confirmation: req.body
       });
     } catch (error) {
-      if (error instanceof Error) {
-        const validationError = fromZodError(error);
+      if (error instanceof z.ZodError) {
         res.status(400).json({ 
           message: "Validation error", 
-          errors: validationError.message 
+          errors: error.issues.map(i => i.message).join(", ")
         });
       } else {
         res.status(500).json({ 
@@ -62,28 +60,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get contact submissions (admin endpoint)
-  app.get("/api/admin/contacts", async (req: Request, res: Response) => {
-    try {
-      const submissions = await storage.getAllContactSubmissions();
-      res.status(200).json(submissions);
-    } catch (error) {
-      res.status(500).json({ 
-        message: "An error occurred while retrieving contact submissions" 
-      });
-    }
+  // Simplified empty endpoint responses
+  app.get("/api/admin/contacts", (_req: Request, res: Response) => {
+    res.status(200).json([]);
   });
 
-  // Get payment confirmations (admin endpoint)
-  app.get("/api/admin/payments", async (req: Request, res: Response) => {
-    try {
-      const payments = await storage.getAllPaymentConfirmations();
-      res.status(200).json(payments);
-    } catch (error) {
-      res.status(500).json({ 
-        message: "An error occurred while retrieving payment confirmations" 
-      });
-    }
+  app.get("/api/admin/payments", (_req: Request, res: Response) => {
+    res.status(200).json([]);
   });
 
   const httpServer = createServer(app);
