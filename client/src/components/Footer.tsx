@@ -82,7 +82,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start">
                 <MessageCircle className="text-[#25F4EE] h-5 w-5 mt-1 mr-3" />
-                <span className="text-[#F1F1F2]/70">+92 308 4336247</span>
+                <span className="text-[#F1F1F2]/70">+92 303 9749212</span>
               </li>
             </ul>
           </div>
